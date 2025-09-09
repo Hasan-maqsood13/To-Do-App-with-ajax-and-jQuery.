@@ -84,3 +84,73 @@ def dashboard(request):
     
     tasks = Task.objects.all().order_by('-created_at')
     return render(request, "dashboard.html", {'tasks': tasks})
+
+def delete_task(request, pk):
+    if request.method == "POST":
+        try:
+            task = Task.objects.get(pk=pk)
+            task.delete()
+            return JsonResponse({"success": True, "message": "Task deleted successfully."})
+        except Task.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Task not found."})
+    return JsonResponse({"success": False, "message": "Invalid request."})
+
+def get_task(request, pk):
+    """Return task data for editing"""
+    try:
+        task = Task.objects.get(pk=pk)
+        task_dict = {
+            "id": task.id,
+            "title": task.title,
+            "description": task.description or "",
+            "due_date": task.due_date.strftime("%Y-%m-%d") if task.due_date else "",
+            "status": task.status,
+            "priority": task.priority,
+            "category": task.category,
+            "image_url": task.image.url if task.image else "",
+        }
+        return JsonResponse({"success": True, "task": task_dict})
+    except Task.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Task not found."})
+
+
+@csrf_exempt
+def update_task(request, pk):
+    """Update task"""
+    if request.method == "POST":
+        try:
+            task = Task.objects.get(pk=pk)
+
+            task.title = request.POST.get("title")
+            task.description = request.POST.get("description")
+            task.status = request.POST.get("status")
+            task.priority = request.POST.get("priority")
+            task.category = request.POST.get("category")
+
+            due_date = request.POST.get("due_date")
+            if due_date:
+                task.due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+
+            if request.FILES.get("image"):
+                task.image = request.FILES.get("image")
+
+            task.save()
+
+            task_dict = {
+                "id": task.id,
+                "title": task.title,
+                "description": task.description or "",
+                "due_date": task.due_date.strftime("%Y-%m-%d") if task.due_date else "",
+                "status": task.status,
+                "priority": task.priority,
+                "category": task.category,
+                "created_at": task.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "updated_at": task.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "image_url": task.image.url if task.image else "",
+            }
+
+            return JsonResponse({"success": True, "task": task_dict})
+        except Task.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Task not found."})
+
+    return JsonResponse({"success": False, "message": "Invalid request."})

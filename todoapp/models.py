@@ -5,8 +5,6 @@ from django.db.models import CharField, DateField, DecimalField, ImageField
 import uuid
 
 # Create your models here.
-from django.db import models
-
 class Task(models.Model):
     # Choices
     STATUS_CHOICES = [

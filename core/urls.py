@@ -22,7 +22,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.dashboard, name='dashboard'),    
+    path('', views.dashboard, name='dashboard'),
+    path('delete/<int:pk>/', views.delete_task, name='delete_task'),
+    path('get-task/<int:pk>/', views.get_task, name='get_task'),
+    path('update-task/<int:pk>/', views.update_task, name='update_task'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
