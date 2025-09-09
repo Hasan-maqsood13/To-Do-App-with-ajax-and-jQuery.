@@ -158,6 +158,8 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.23.0/dist/sweetalert2.all.min.js"></script>
+
 
     <script>
         $(document).ready(function () {
@@ -174,7 +176,13 @@
                     contentType: false,
                     success: function (res) {
                         if (res.success) {
-                            alert(res.message);
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Your work has been saved",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
 
                             // form reset
                             $("#myForm")[0].reset();
@@ -210,7 +218,13 @@
                             </tr>
                         `);
                         } else {
-                            alert("Error: " + res.message);
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: res.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
                         }
                     },
                     error: function (xhr, status, error) {

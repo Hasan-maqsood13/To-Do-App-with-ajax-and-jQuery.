@@ -45,11 +45,9 @@ def dashboard(request):
         category = request.POST.get("category")
         image = request.FILES.get("image")
 
-        # Only require title, other fields can be optional based on your model
         if not title:
             return JsonResponse({"success": False, "message": "Title is required."})
         
-        # Create the task with available data
         task = Task(
             title=title,
             description=description,
@@ -58,15 +56,13 @@ def dashboard(request):
             category=category or 'Other',
         )
         
-        # Set optional fields if provided
         if due_date:
-            task.due_date = due_date
+            task.due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
         if image:
             task.image = image
             
         task.save()
 
-        # Prepare task data for response
         task_dict = {
             "id": task.id,
             "title": task.title,
